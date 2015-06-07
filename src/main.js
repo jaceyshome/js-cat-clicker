@@ -20,7 +20,6 @@ var myApp = (function(){
   };
 
   myApp.run = function(){
-    console.log(components);
     setup();
   };
 
@@ -37,8 +36,8 @@ var myApp = (function(){
 
   function setupComponent(element, component){
     var inner = component.fn();
-    inner.link(element);
     element.innerHTML = inner.template;
+    inner.link(element);
   }
 
   return myApp;
