@@ -4,9 +4,9 @@ lark.addComponent('catContainer',(function(){
       scope: {
         imageSrc: "="
       },
-      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img data-js-src="{{imageSrc}}" alt="cat image"/></a><p class="message">{{counter}}</p>',
+      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img data-js-src="{{imageSrc}}" alt="cat image"/></a><p class="messageHolder"></p>',
       link: (function($scope,$element,$attr){
-        var counter = 0, $messageContainer;
+        var counter = 0, $messageHolder;
 
         function init(){
           getMessageElement();
@@ -14,15 +14,11 @@ lark.addComponent('catContainer',(function(){
         }
 
         function getMessageElement(){
-          for(var i = 0, length = $element.children.length; i<length; i++){
-            if($element.children[i].className == 'message'){
-              $messageContainer = $element.children[i];
-            }
-          }
+          $messageHolder = $element.children[1];
         }
 
         function updateMessage(){
-          $messageContainer.innerHTML = "<span>"+counter+"</span>";
+          $messageHolder.innerHTML = "<span>"+counter+"</span>";
         }
 
         $scope.clickImage = function(e){

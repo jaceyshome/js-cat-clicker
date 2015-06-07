@@ -37,7 +37,7 @@ var lark = (function(){
     for(var i = 0, comLength=components.length; i<comLength; i++){
       if(element.hasAttribute(components[i].attr) ||
         element.hasAttribute("data-"+components[i].attr)){
-        loadScope(_scope, element, components[i]);
+        bindComponentToScope(_scope, components[i]);
         if(element.children && element.children.length > 0){
           loopElements(_scope,element.children);
         }
@@ -47,20 +47,28 @@ var lark = (function(){
 
   function createScope(parentScope, element){
     var _scope =  new Scope(generateUID());
-    element.__scope = _scope;
     _scope.$$parent = parentScope;
+    _scope.$$element = element;
+    parentScope.$$children.push(_scope);
     return _scope;
   }
 
-  function loadScope(scope,element, component){
-    var inner = component.fn();
+  function bindComponentToScope(scope,component){
+    var inner = component.fn(),innerScope = {}, attr=null;
     if(inner.scope){
-
+      for(var key in inner.scope){
+        attr = key.replace(/([A-Z])/g, "-$1");
+        if(inner.scope.hasOwnProperty(key)){
+          innerScope[key] = scope.$$element.getAttribute(attr) || scope.$$element.getAttribute("data-"+attr);
+        }
+      }
+      scope.extend(innerScope);
     }
     if(inner.template){
-      element.innerHTML = inner.template;
+      scope.template = inner.template;
     }
-    inner.link(scope,element);
+    scope.init();
+    inner.link(scope,scope.$$element);
     return scope;
   }
 
