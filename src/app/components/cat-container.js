@@ -1,7 +1,10 @@
-myApp.addComponent('catContainer',(function(){
+lark.addComponent('catContainer',(function(){
   return function(){
     return {
-      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img src="assets/images/cat.jpg" alt="cat image"/></a><p class="message"></p>',
+      scope: {
+        imageSrc: "="
+      },
+      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img data-js-src="{{imageSrc}}" alt="cat image"/></a><p class="message">{{counter}}</p>',
       link: (function($scope,$element,$attr){
         var counter = 0, $messageContainer;
 

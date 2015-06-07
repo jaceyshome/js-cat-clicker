@@ -1,16 +1,14 @@
-
-var myApp = (function(){
-  var myApp = {}, entityTotal = 0,
-    $mainContainer = document.getElementById("mainContainer"), appScope = {},
+var lark = (function(){
+  var lark = {}, entityTotal = 0,
+    $mainContainer = null, appScope = null,
     components = [], services = [];
 
-  function generateUID(){
-    var id = "_" + entityTotal;
-    entityTotal += 1;
-    return id;
-  }
+  lark.addApp = function(elementId){
+    $mainContainer = document.getElementById(elementId);
+    appScope = new Scope(generateUID());
+  };
 
-  myApp.addComponent = function(name,fn){
+  lark.addComponent = function(name,fn){
     components.push({
       name: name,
       attr: name.replace(/([A-Z])/g, "-$1").toLowerCase(),
@@ -18,9 +16,15 @@ var myApp = (function(){
     });
   };
 
-  myApp.run = function(){
+  lark.run = function(){
     loopElements(appScope, $mainContainer.children);
   };
+
+  function generateUID(){
+    var id = "_" + entityTotal;
+    entityTotal += 1;
+    return id;
+  }
 
   function loopElements(parentScope, elements){
     for(var index = 0, length=elements.length; index<length; index++){
@@ -42,9 +46,7 @@ var myApp = (function(){
   }
 
   function createScope(parentScope, element){
-    var _scope =  {
-      __id: generateUID()
-    };
+    var _scope =  new Scope(generateUID());
     element.__scope = _scope;
     _scope.$$parent = parentScope;
     return _scope;
@@ -52,6 +54,9 @@ var myApp = (function(){
 
   function loadScope(scope,element, component){
     var inner = component.fn();
+    if(inner.scope){
+
+    }
     if(inner.template){
       element.innerHTML = inner.template;
     }
@@ -59,11 +64,11 @@ var myApp = (function(){
     return scope;
   }
 
-  return myApp;
+  return lark;
 
 })();
 
 
 document.addEventListener("DOMContentLoaded", function(){
-  myApp.run();
+  lark.run();
 });
