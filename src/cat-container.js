@@ -1,20 +1,19 @@
 myApp.addComponent('catContainer',(function(){
   return function(){
     return {
-      template: '<a href="javascript:void(0);"><img src="assets/images/cat.jpg" alt="cat image"/></a><p class="message"></p>',
+      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img src="assets/images/cat.jpg" alt="cat image"/></a><p class="message"></p>',
       link: (function($scope,$element,$attr){
         var counter = 0, $messageContainer;
 
         function init(){
-          $scope.addEventListener('click',clickImage);
           getMessageElement();
           updateMessage();
         }
 
         function getMessageElement(){
-          for(var i = 0, length = $scope.children.length; i<length; i++){
-            if($scope.children[i].className == 'message'){
-              $messageContainer = $scope.children[i];
+          for(var i = 0, length = $element.children.length; i<length; i++){
+            if($element.children[i].className == 'message'){
+              $messageContainer = $element.children[i];
             }
           }
         }
@@ -23,10 +22,10 @@ myApp.addComponent('catContainer',(function(){
           $messageContainer.innerHTML = "<span>"+counter+"</span>";
         }
 
-        function clickImage(e){
+        $scope.clickImage = function(e){
           counter += 1;
           updateMessage();
-        }
+        };
 
         init();
 
