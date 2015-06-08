@@ -28,6 +28,9 @@ var lark = (function(){
     loopElements(appScope, $mainContainer.children);
   };
 
+  lark.createElementScope = createElementScope;
+  lark.createScope = createScope;
+
   function generateUID(){
     var id = "_" + entityTotal;
     entityTotal += 1;
@@ -47,18 +50,17 @@ var lark = (function(){
 
   function loopElements(parentScope, elements){
     for(var index = 0, length=elements.length; index<length; index++){
-      createElementScope(parentScope, elements[index]);
+      createElementScope(createScope(parentScope, elements[index]), parentScope, elements[index]);
     }
   }
 
-  function createElementScope(parentScope, element){
-    var _scope = createScope(parentScope, element);
+  function createElementScope(scope, parentScope, element){
     for(var i = 0, comLength=components.length; i<comLength; i++){
       if(element.hasAttribute(components[i].attr) ||
         element.hasAttribute("data-"+components[i].attr)){
-        bindComponentToScope(_scope, components[i]);
+        bindComponentToScope(scope, components[i]);
         if(element.children && element.children.length > 0){
-          loopElements(_scope,element.children);
+          loopElements(scope,element.children);
         }
       }
     }
