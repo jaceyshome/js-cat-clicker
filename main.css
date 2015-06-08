@@ -1,0 +1,16 @@
+img{
+  width: 100%;
+  height: auto;
+}
+
+.catListContainer{
+  display: inline-block;
+  vertical-align: top;
+  width: 45%;
+}
+
+.catCurrentContainer{
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
