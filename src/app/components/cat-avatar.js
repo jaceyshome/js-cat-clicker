@@ -1,14 +1,13 @@
-lark.addComponent('catAvatar',[function(){
+lark.addComponent('catAvatar',['catService',function(catService){
   return function(){
     return {
       scope: {
-        imageSrc: "="
+        cat: "="
       },
-      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img data-js-src="{{imageSrc}}" alt="cat image"/></a>',
+      template: '<a href="javascript:void(0);" data-js-click="clickImage()"><img data-js-src="{{cat.src}}" alt="cat image"/></a>',
       link: (function($scope,$element,$attr){
-
         $scope.clickImage = function(e){
-
+          catService.currentCat = $scope.cat;
         };
       })
     }
