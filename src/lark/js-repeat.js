@@ -24,7 +24,7 @@ lark.addComponent('jsRepeat',[function(){
                   $scope.$$parent.$$element.appendChild(childElement);
                   scope = lark.createScope($scope.$$parent,childElement);
                   scope[targetObjKey] = $scope.$$parent[parentObjKey][key];
-                  lark.createElementScope(scope,$scope.$$parent, childElement);
+                  lark.bindComponentsToScope(scope, childElement);
                   addCommentBeforeChild(endMarker, childElement);
                   addCommentBeforeChild(startMarker, childElement);
                 }

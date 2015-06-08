@@ -28,7 +28,7 @@ var lark = (function(){
     loopElements(appScope, $mainContainer.children);
   };
 
-  lark.createElementScope = createElementScope;
+  lark.bindComponentsToScope = bindComponentsToScope;
   lark.createScope = createScope;
 
   function generateUID(){
@@ -50,11 +50,11 @@ var lark = (function(){
 
   function loopElements(parentScope, elements){
     for(var index = 0, length=elements.length; index<length; index++){
-      createElementScope(createScope(parentScope, elements[index]), parentScope, elements[index]);
+      bindComponentsToScope(createScope(parentScope, elements[index]), elements[index]);
     }
   }
 
-  function createElementScope(scope, parentScope, element){
+  function bindComponentsToScope(scope, element){
     for(var i = 0, comLength=components.length; i<comLength; i++){
       if(element.hasAttribute(components[i].attr) ||
         element.hasAttribute("data-"+components[i].attr)){
