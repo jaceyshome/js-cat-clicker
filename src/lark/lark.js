@@ -1,19 +1,27 @@
 var lark = (function(){
   var lark = {}, entityTotal = 0,
     $mainContainer = null, appScope = null,
-    components = [], services = [];
+    components = [], services = {};
 
   lark.addApp = function(elementId){
     $mainContainer = document.getElementById(elementId);
     appScope = new Scope(generateUID());
   };
 
-  lark.addComponent = function(name,fn){
+  lark.addComponent = function(name,args){
+    var _fn = args.pop(),
+      _argServices = getServicesFromNames(args);
     components.push({
       name: name,
       attr: name.replace(/([A-Z])/g, "-$1").toLowerCase(),
-      fn: fn
+      fn: _fn.apply(this, _argServices)
     });
+  };
+
+  lark.addService = function(name, args){
+    var _fn = args.pop(),
+      _argServices = getServicesFromNames(args);
+    services[name] = Service.call(_fn.apply(this,_argServices), generateUID());
   };
 
   lark.run = function(){
@@ -24,6 +32,17 @@ var lark = (function(){
     var id = "_" + entityTotal;
     entityTotal += 1;
     return id;
+  }
+
+  function getServicesFromNames(objNames){
+    var _objects = [];
+    if(!objNames){
+      return [];
+    }
+    for(var i= 0,length=objNames.length;i<length;i++){
+      _objects.push(services[objNames[i]]);
+    }
+    return _objects;
   }
 
   function loopElements(parentScope, elements){

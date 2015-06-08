@@ -1,4 +1,4 @@
-lark.addComponent('catContainer',(function(){
+lark.addComponent('catContainer',[function(){
   return function(){
     return {
       scope: {
@@ -31,5 +31,5 @@ lark.addComponent('catContainer',(function(){
       })
     }
   }
-})());
+}]);
 

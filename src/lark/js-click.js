@@ -1,4 +1,4 @@
-lark.addComponent('jsClick',(function(){
+lark.addComponent('jsClick',[function(){
   return function(){
     return {
       link: (function($scope,$element,$attr){
@@ -11,5 +11,5 @@ lark.addComponent('jsClick',(function(){
       })
     }
   }
-})());
+}]);
 

@@ -1,4 +1,4 @@
-lark.addComponent('jsSrc',(function(){
+lark.addComponent('jsSrc',[function(){
   return function(){
     return {
       link: (function($scope,$element,$attr){
@@ -9,5 +9,5 @@ lark.addComponent('jsSrc',(function(){
       })
     }
   }
-})());
+}]);
 
