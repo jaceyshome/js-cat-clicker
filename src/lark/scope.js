@@ -9,16 +9,25 @@ function Scope(id){
 Scope.prototype.extend = function(obj){
   for (var i in obj) {
     if (obj.hasOwnProperty(i)) {
-      this[i] = obj[i];
+      this[i] = this[i] || obj[i];
     }
   }
 };
 
 Scope.prototype.init = function(){
-  var scope = this;
+  var scope = this, keys=null, obj=null;
   if(scope.template){
     scope.$$element.innerHTML = scope.template.replace(/{{(.*?)}}/g, function(match,p1){
-      return scope[p1] != undefined ? scope[p1]:'';
+      keys = p1.split(".");
+      obj = scope;
+      for(var i = 0, len = keys.length; i<len; i++){
+        obj = obj[keys[i]];
+        if(obj == undefined){
+          return '';
+        }
+      }
+      return obj;
     });
   }
+
 };
