@@ -5,7 +5,11 @@ lark.addComponent('jsClick',[function(){
         var fnStr = $element.getAttribute('js-click') || $element.getAttribute('data-js-click'),
           fnName = fnStr.replace(/\(.*?\)/g, '');
         if($scope.$$parent[fnName]){
-          $element.addEventListener("click", $scope.$$parent[fnName], false);
+          $element.addEventListener("click", function(){
+            console.log("event");
+            $scope.$$parent[fnName]();
+            $scope.$apply();
+          }, false);
         }
 
       })

@@ -14,20 +14,44 @@ Scope.prototype.extend = function(obj){
   }
 };
 
-Scope.prototype.init = function(){
-  var scope = this, keys=null, obj=null;
-  if(scope.template){
-    scope.$$element.innerHTML = scope.template.replace(/{{(.*?)}}/g, function(match,p1){
-      keys = p1.split(".");
-      obj = scope;
-      for(var i = 0, len = keys.length; i<len; i++){
-        obj = obj[keys[i]];
-        if(obj == undefined){
-          return '';
-        }
-      }
-      return obj;
-    });
+Scope.prototype.$apply = (lark.addService('$apply',['$digest',function($digest){
+  return function(){
+    $digest.loop();
   }
+}]));
 
+Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
+  return function(expression, fn){
+    var scope = this;
+    switch (typeof expression){
+      case 'string':
+        $digest.watch(
+          function(){
+            return scope.getExpressionValue(expression);
+          },
+          fn
+        );
+        break;
+      case 'function':
+        $digest.watch(
+          expression.bind(scope),
+          fn
+        );
+        break;
+      default :
+        return;
+    }
+  }
+}]));
+
+Scope.prototype.getExpressionValue = function(expression){
+  var keys = expression.split('.'), obj = this[keys[0]];
+  for(var i= 1, len=keys.length; i<len; i++){
+    if(obj != undefined){
+      obj = obj[keys[i]]
+    }else{
+      return undefined;
+    }
+  }
+  return obj;
 };

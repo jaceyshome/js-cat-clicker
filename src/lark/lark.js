@@ -1,11 +1,11 @@
 var lark = (function(){
   var lark = {}, entityTotal = 0,
-    $mainContainer = null, appScope = null,
+    $mainContainer = null, rootScope = null,
     components = [], services = {};
 
   lark.addApp = function(elementId){
     $mainContainer = document.getElementById(elementId);
-    appScope = new Scope(generateUID());
+    rootScope = new Scope(generateUID());
   };
 
   lark.addComponent = function(name,args){
@@ -22,10 +22,11 @@ var lark = (function(){
     var _fn = args.pop(),
       _argServices = getServicesFromNames(args);
     services[name] = Service.call(_fn.apply(this,_argServices), generateUID());
+    return services[name];
   };
 
   lark.run = function(){
-    loopElements(appScope, $mainContainer.children);
+    loopElements(rootScope, $mainContainer.children);
   };
 
   lark.bindComponentsToScope = bindComponentsToScope;
@@ -78,8 +79,8 @@ var lark = (function(){
     var inner = component.fn(),innerScope = {}, attr=null;
     if(inner.scope){
       for(var key in inner.scope){
-        attr = key.replace(/([A-Z])/g, "-$1");
         if(inner.scope.hasOwnProperty(key)){
+          attr = key.replace(/([A-Z])/g, "-$1");
           innerScope[key] = scope.$$element.getAttribute(attr) || scope.$$element.getAttribute("data-"+attr);
         }
       }
@@ -88,9 +89,73 @@ var lark = (function(){
     if(inner.template){
       scope.template = inner.template;
     }
-    scope.init();
+    bindScopeModelToTemplate(scope);
     inner.link(scope,scope.$$element);
     return scope;
+  }
+
+  function bindScopeModelToTemplate(scope){
+    var keys=null, obj=null;
+    if(scope.template){
+      scope.$$element.innerHTML = scope.template;
+      scope.template += scope.template;
+      loopElementChildren(scope, scope.$$element.children);
+//        if(scope.$$element.children[childIndex].hasAttribute()){
+//
+//        }
+
+//      scope.template.replace(/\s+?([\w-]+)="\s*?{{(.+?)}}\s*?"/ig, function(match, attr, expression){
+//        scope.$watch(
+//          function(){
+//
+//          }, function(){
+//
+//          }
+//        );
+//
+//        console.log(scope.$$element.querySelectorAll("["+p1+"="+p2+"]"));
+//        console.log(p1);
+//        console.log(p2);
+//      });
+//
+
+//      scope.$$element.innerHTML = scope.template.replace(/{{(.*?)}}/g, function(match,p1){
+//        keys = p1.split(".");
+//        obj = scope;
+//        for(var i = 0, len = keys.length; i<len; i++){
+//          obj = obj[keys[i]];
+//          if(obj == undefined){
+//            return '';
+//          }
+//        }
+//        return obj;
+//      });
+
+    }
+  }
+
+  function loopElementChildren(scope, children){
+    if(children.length == 0){
+      return;
+    }
+    Array.prototype.forEach.call(children,function(child,index,children){
+      loopElementChildren(scope, child.children);
+      child.hasAttributes() && Array.prototype.forEach.call(child.attributes,function(attr, index, attributes){
+        var results = attr.value.match(/{{\s*?(.+?)\s*?}}/i);
+        (results != undefined) && bindData(scope,results[1], child, attr);
+      });
+    });
+  }
+
+  function bindData(scope, expression, element, attr){
+    var oldVal = scope.getExpressionValue(expression);
+    attr.value = oldVal || '';
+    scope.$watch(expression, function(val){
+      if(val != oldVal){
+        attr.value = val;
+        oldVal = val;
+      }
+    })
   }
 
   return lark;

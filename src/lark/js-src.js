@@ -2,10 +2,15 @@ lark.addComponent('jsSrc',[function(){
   return function(){
     return {
       link: (function($scope,$element,$attr){
-        var src = $element.getAttribute('js-src') || $element.getAttribute('data-js-src');
-        if(src){
-          $element.setAttribute('src',src);
-        }
+        $scope.$watch(
+          function(){
+            return $element.getAttribute('js-src') || $element.getAttribute('data-js-src');
+          },
+          function(val){
+            if(val){
+              $element.setAttribute('src',val);
+            }
+        });
       })
     }
   }
