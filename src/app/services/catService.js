@@ -4,19 +4,19 @@ lark.addService('catService',[function(){
   service.cats = [
     {
       src: "assets/images/cat.jpg",
-      counter: 0
+      counter: 5
     },
     {
       src: "assets/images/cat2.jpg",
-      counter: 0
+      counter: 5
     },
     {
       src: "assets/images/cat-vet.jpg",
-      counter: 0
+      counter: 5
     }
   ];
 
-  service.currentCat = service.cats[0];
+  service.currentCat = null;
 
   return service;
 }]);
