@@ -120,11 +120,11 @@ var lark = (function(){
     var results = element.textContent.match(/{{\s*?(.+?)\s*?}}/i), oldVal;
     if(results){
       oldVal = scope.getExpressionValue(results[1]);
-      element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal);
+      element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
       scope.$watch(results[1], function(val){
         if(val != oldVal){
           oldVal = val;
-          element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal);
+          element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
         }
       });
     }
@@ -135,11 +135,11 @@ var lark = (function(){
     var results = attr.value.match(/{{\s*?(.+?)\s*?}}/i), oldVal;
     if(results){
       oldVal = scope.getExpressionValue(results[1]);
-      attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal);
+      attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
       scope.$watch(results[1], function(val){
         if(val != oldVal){
           oldVal = val;
-          attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal);
+          attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
         }
       })
     }
