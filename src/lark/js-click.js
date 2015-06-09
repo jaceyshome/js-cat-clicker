@@ -6,7 +6,6 @@ lark.addComponent('jsClick',[function(){
           fnName = fnStr.replace(/\(.*?\)/g, '');
         if($scope.$$parent[fnName]){
           $element.addEventListener("click", function(){
-            console.log("event");
             $scope.$$parent[fnName]();
             $scope.$apply();
           }, false);
