@@ -10,7 +10,6 @@ lark.addComponent('jsClick',[function(){
             $scope.$apply();
           }, false);
         }
-
       })
     }
   }

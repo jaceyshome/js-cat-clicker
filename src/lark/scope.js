@@ -41,6 +41,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
       default :
         return;
     }
+    $digest.loop();
   }
 }]));
 

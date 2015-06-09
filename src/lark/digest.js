@@ -26,7 +26,5 @@ lark.addService('$digest',[function(){
     }
   };
 
-  setInterval($digest.loop, 1000);
-
   return $digest;
 }]);
