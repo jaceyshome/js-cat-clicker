@@ -111,22 +111,24 @@ var lark = (function(){
       child.hasAttributes() && Array.prototype.forEach.call(child.attributes,function(attr){
         bindAttrToScope(scope, child, attr);
       });
-      loopElementChildren(scope, child.children);
     });
   }
 
   function bindTextContentToScope(scope,element){
-    //TODO for multi {{}} conditions
-    var results = element.textContent.match(/{{\s*?(.+?)\s*?}}/i), oldVal;
-    if(results){
-      oldVal = scope.getExpressionValue(results[1]);
-      element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
-      scope.$watch(results[1], function(val){
-        if(val != oldVal){
-          oldVal = val;
-          element.textContent = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
-        }
-      });
+    var results = element.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
+    if(results != null){
+      scope.$watch(results, (function(element){
+        var oldValues, originalTextContent = element.textContent;
+        return function(newVals){
+          var newTextContent = originalTextContent;
+          if(newVals != oldValues){
+            newVals.forEach(function(newVal){
+              newTextContent = newTextContent.replace(/({{\s*?.+?\s*?}})/i, newVal || '');
+            });
+            element.textContent = newTextContent;
+          }
+        };
+      })(element));
     }
   }
 
