@@ -104,32 +104,37 @@ var lark = (function(){
 
   function loopElementChildren(scope, children){
     if(children.length == 0){
-      return;
+      return false;
     }
     Array.prototype.forEach.call(children,function(child){
-      bindTextContentToScope(scope,child);
       child.hasAttributes() && Array.prototype.forEach.call(child.attributes,function(attr){
         bindAttrToScope(scope, child, attr);
       });
+      bindTextNodesToScope(scope, child);
+      loopElementChildren(scope, child.children);
     });
+    return true;
   }
 
-  function bindTextContentToScope(scope,element){
-    var results = element.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
-    if(results != null){
-      scope.$watch(results, (function(element){
-        var oldValues, originalTextContent = element.textContent;
-        return function(newVals){
-          var newTextContent = originalTextContent;
-          if(newVals != oldValues){
-            newVals.forEach(function(newVal){
-              newTextContent = newTextContent.replace(/({{\s*?.+?\s*?}})/i, newVal || '');
-            });
-            element.textContent = newTextContent;
-          }
-        };
-      })(element));
-    }
+  function bindTextNodesToScope(scope,element){
+    Array.prototype.forEach.call(element.childNodes, function(childNode, index){
+      var results = childNode.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
+      if(results != null){
+        scope.$watch(results, (function(element){
+          var oldVals, originalTextContent = element.textContent;
+          return function(newVals){
+            var newTextContent = originalTextContent;
+            if(newVals != oldVals){
+              newVals.forEach(function(newVal){
+                newTextContent = newTextContent.replace(/({{\s*?.+?\s*?}})/i, newVal != undefined? newVal : '');
+              });
+              element.textContent = newTextContent;
+              oldVals = newVals;
+            }
+          };
+        })(childNode));
+      }
+    });
   }
 
   function bindAttrToScope(scope, element, attr){
@@ -137,11 +142,11 @@ var lark = (function(){
     var results = attr.value.match(/{{\s*?(.+?)\s*?}}/i), oldVal;
     if(results){
       oldVal = scope.getExpressionValue(results[1]);
-      attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
+      attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal != undefined? oldVal : '');
       scope.$watch(results[1], function(val){
         if(val != oldVal){
           oldVal = val;
-          attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal || '');
+          attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal != undefined? oldVal : '');
         }
       })
     }

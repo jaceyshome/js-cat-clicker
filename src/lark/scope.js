@@ -32,6 +32,16 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
           fn
         );
         break;
+      case 'object':
+        $digest.watch(
+          function(){
+            return Array.prototype.map.call(expression, function(val){
+              return scope.getExpressionValue(val);
+            });
+          },
+          fn
+        );
+        break;
       case 'function':
         $digest.watch(
           expression.bind(scope),
@@ -46,6 +56,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
 }]));
 
 Scope.prototype.getExpressionValue = function(expression){
+  expression = expression.replace("{{",'').replace("}}",'');
   var keys = expression.split('.'), obj = this[keys[0]];
   for(var i= 1, len=keys.length; i<len; i++){
     if(obj != undefined){
