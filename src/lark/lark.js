@@ -138,17 +138,21 @@ var lark = (function(){
   }
 
   function bindAttrToScope(scope, element, attr){
-    //TODO for multi {{}} conditions
-    var results = attr.value.match(/{{\s*?(.+?)\s*?}}/i), oldVal;
-    if(results){
-      oldVal = scope.getExpressionValue(results[1]);
-      attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal != undefined? oldVal : '');
-      scope.$watch(results[1], function(val){
-        if(val != oldVal){
-          oldVal = val;
-          attr.value = results.input.replace(/({{\s*?.+?\s*?}})/i, oldVal != undefined? oldVal : '');
-        }
-      })
+    var results = attr.value.match(/{{\s*?(.+?)\s*?}}/ig), oldVal;
+    if(results != null){
+      scope.$watch(results, (function(attr){
+        var oldVals, originalValue = attr.value;
+        return function(newVals){
+          var newValue = originalValue;
+          if(newVals != oldVals){
+            newVals.forEach(function(newVal){
+              newValue = newValue.replace(/({{\s*?.+?\s*?}})/i, newVal != undefined? newVal : '');
+            });
+            attr.value = newValue;
+            oldVals = newVals;
+          }
+        };
+      })(attr));
     }
   }
 
