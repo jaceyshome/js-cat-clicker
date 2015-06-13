@@ -23,7 +23,7 @@ lark.addService('catService',[function(){
       counter: 3
     },
     {
-      name: 'a real cat',
+      name: 'stone cat',
       src: "assets/images/cat4.jpg",
       counter: 4
     }
