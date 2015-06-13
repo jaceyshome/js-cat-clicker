@@ -13,17 +13,17 @@ lark.addService('catService',[function(){
       counter: 1
     },
     {
-      name: 'max',
+      name: 'lazy cat',
       src: "assets/images/cat-vet.jpg",
       counter: 2
     },
     {
-      name: 'solider',
+      name: 'funny cat',
       src: "assets/images/cat3.jpg",
       counter: 3
     },
     {
-      name: 'angel',
+      name: 'a real cat',
       src: "assets/images/cat4.jpg",
       counter: 4
     }

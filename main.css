@@ -14,3 +14,7 @@ img{
   vertical-align: top;
   width: 50%;
 }
+
+.catAvatar img{
+  width: 15%;
+}
