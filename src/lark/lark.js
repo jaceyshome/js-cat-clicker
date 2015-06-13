@@ -16,6 +16,13 @@ var lark = (function(){
       attr: name.replace(/([A-Z])/g, "-$1").toLowerCase(),
       fn: _fn.apply(this, _argServices)
     });
+//    components.sort(function(a,b){
+//      if(a.priority && a.priority > b.priority){
+//        return a;
+//      }else{
+//        return b;
+//      }
+//    })
   };
 
   lark.addService = function(name, args){
@@ -26,10 +33,10 @@ var lark = (function(){
   };
 
   lark.run = function(){
-    loopElements(rootScope, $mainContainer.children);
+    loopElements(createScope(rootScope,$mainContainer), $mainContainer.children);
   };
 
-  lark.bindComponentsToScope = bindComponentsToScope;
+  lark.createComponents = createComponents;
   lark.createScope = createScope;
 
   function generateUID(){
@@ -49,57 +56,50 @@ var lark = (function(){
     return _objects;
   }
 
-  function loopElements(parentScope, elements){
+  function loopElements(scope, elements){
     for(var index = 0, length=elements.length; index<length; index++){
-      bindComponentsToScope(createScope(parentScope, elements[index]), elements[index]);
+      createComponents(scope, elements[index]);
     }
   }
 
-  function bindComponentsToScope(scope, element){
+  function createComponents(scope, element){
     for(var i = 0, comLength=components.length; i<comLength; i++){
       if(element.hasAttribute(components[i].attr) ||
         element.hasAttribute("data-"+components[i].attr)){
-        bindComponentToScope(scope, components[i]);
-        if(element.children && element.children.length > 0){
-          loopElements(scope,element.children);
-        }
+        createComponent(scope, element, components[i]);
+      }
+      if(element.children && element.children.length > 0){
+        loopElements(scope,element.children);
       }
     }
   }
 
-  function createScope(parentScope, element){
+  function createScope(parentScope){
     var _scope =  new Scope(generateUID());
     _scope.$$parent = parentScope;
-    _scope.$$element = element;
     parentScope.$$children.push(_scope);
     return _scope;
   }
 
-  function bindComponentToScope(scope,component){
-    var inner = component.fn(),innerScope = {}, attr=null;
-    if(inner.scope){
-      for(var key in inner.scope){
-        if(inner.scope.hasOwnProperty(key)){
+  function createComponent(scope, element, component){
+    var model = component.fn(), _scope = {}, attr=null;
+    if(model.scope){
+      scope = createScope(scope);
+      for(var key in model.scope){
+        if(model.scope.hasOwnProperty(key)){
           attr = key.replace(/([A-Z])/g, "-$1");
-          innerScope[key] = scope.$$element.getAttribute(attr) || scope.$$element.getAttribute("data-"+attr);
+          _scope[key] = element.getAttribute(attr) || element.getAttribute("data-"+attr);
         }
       }
-      scope.extend(innerScope);
+      scope.extend(_scope);
     }
-    if(inner.template){
-      scope.template = inner.template;
+    if(model.template){
+      element.innerHTML = model.template;
     }
-    bindScopeModelToTemplate(scope);
-    inner.link(scope,scope.$$element);
+    loopElementChildren(scope, element.children);
+    loopElements(scope, element.children);
+    model.link(scope,element);
     return scope;
-  }
-
-  function bindScopeModelToTemplate(scope){
-    if(scope.template){
-      scope.$$element.innerHTML = scope.template;
-      scope.template += scope.template;
-      loopElementChildren(scope, scope.$$element.children);
-    }
   }
 
   function loopElementChildren(scope, children){

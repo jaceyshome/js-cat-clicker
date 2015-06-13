@@ -27,7 +27,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
       case 'string':
         $digest.watch(
           function(){
-            return scope.getExpressionValue(expression);
+            return scope.$getExpressionValue(expression);
           },
           fn
         );
@@ -36,7 +36,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
         $digest.watch(
           function(){
             return Array.prototype.map.call(expression, function(val){
-              return scope.getExpressionValue(val);
+              return scope.$getExpressionValue(val);
             });
           },
           fn
@@ -55,7 +55,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
   }
 }]));
 
-Scope.prototype.getExpressionValue = function(expression){
+Scope.prototype.$getExpressionValue = function(expression){
   expression = expression.replace("{{",'').replace("}}",'');
   var keys = expression.split('.'), obj = this[keys[0]];
   for(var i= 1, len=keys.length; i<len; i++){
@@ -67,3 +67,18 @@ Scope.prototype.getExpressionValue = function(expression){
   }
   return obj;
 };
+
+//Scope.prototype.$applyExpressionValue = function(expression,val){
+//  expression = expression.replace("{{",'').replace("}}",'');
+//  var keys = expression.split('.'), lastKey = keys.pop(), obj = this[keys[0]];
+//  console.log(this);
+//  console.log(keys);
+//  for(var i= 1, len=keys.length; i<len; i++){
+//    if(obj != undefined){
+//      obj = obj[keys[i]]
+//    }else{
+//      return undefined;
+//    }
+//  }
+//  obj[lastKey] = val;
+//};
