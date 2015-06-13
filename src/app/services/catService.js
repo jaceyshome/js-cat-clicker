@@ -19,12 +19,12 @@ lark.addService('catService',[function(){
     },
     {
       name: 'solider',
-      src: "assets/images/cat-vet.jpg",
+      src: "assets/images/cat3.jpg",
       counter: 3
     },
     {
       name: 'angel',
-      src: "assets/images/cat-vet.jpg",
+      src: "assets/images/cat4.jpg",
       counter: 4
     }
   ];
