@@ -10,6 +10,8 @@ lark.addComponent('catContainer',['catService',function(catService){
           '<a data-js-click="toggle()" class="adminButton">admin</a>' +
           '<div class="admin-container" data-js-show="showAdmin">' +
             '<input data-js-model="catService.currentCat.name" />' +
+            '<input data-js-model="catService.currentCat.src" />' +
+            '<input data-js-model="catService.currentCat.counter" />' +
           '</div>',
 //        '<div class="messageContainer">counter: {{catService.currentCat.counter}}</div>',
       link: (function($scope,$element,$attr){
@@ -20,7 +22,7 @@ lark.addComponent('catContainer',['catService',function(catService){
         };
         $scope.toggle = function(){
           $scope.showAdmin = !$scope.showAdmin;
-        }
+        };
       })
     }
   }
