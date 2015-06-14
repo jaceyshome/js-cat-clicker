@@ -36,7 +36,7 @@ var lark = (function(){
     loopElements(createScope(rootScope,$mainContainer), $mainContainer.children);
   };
 
-  lark.createComponents = createComponents;
+  lark.bindMatchedComponents = bindMatchedComponents;
   lark.createScope = createScope;
 
   function generateUID(){
@@ -58,20 +58,20 @@ var lark = (function(){
 
   function loopElements(scope, elements){
     for(var index = 0, length=elements.length; index<length; index++){
-      createComponents(scope, elements[index]);
+      bindMatchedComponents(scope, elements[index]);
     }
   }
 
-  function createComponents(scope, element){
+  function bindMatchedComponents(scope, element){
     for(var i = 0, comLength=components.length; i<comLength; i++){
       if(element.hasAttribute(components[i].attr) ||
         element.hasAttribute("data-"+components[i].attr)){
-        createComponent(scope, element, components[i]);
-      }
-      if(element.children && element.children.length > 0){
-        loopElements(scope,element.children);
+        //returning scope will be a child
+        scope = bindComponent(scope, element, components[i]);
       }
     }
+    addWatchersToElement(scope, element);
+    loopElements(scope, element.children);
   }
 
   function createScope(parentScope){
@@ -81,63 +81,59 @@ var lark = (function(){
     return _scope;
   }
 
-  function createComponent(scope, element, component){
-    var model = component.fn(), _scope = {}, attr=null;
-    if(model.scope){
+  function bindComponent(scope, element, component){
+    var _component = component.fn(), _scope = {}, attr=null;
+    //Create a new scope if the scope is isolated, otherwise element share the same scope
+    if(_component.scope){
       scope = createScope(scope);
-      for(var key in model.scope){
-        if(model.scope.hasOwnProperty(key)){
+      for(var key in _component.scope){
+        if(_component.scope.hasOwnProperty(key)){
           attr = key.replace(/([A-Z])/g, "-$1");
           _scope[key] = element.getAttribute(attr) || element.getAttribute("data-"+attr);
         }
       }
       scope.extend(_scope);
     }
-    if(model.template){
-      element.innerHTML = model.template;
+    if(_component.template){
+      element.innerHTML = _component.template;
     }
-    loopElementChildren(scope, element.children);
-    loopElements(scope, element.children);
-    model.link(scope,element);
+    _component.link(scope,element);
     return scope;
   }
 
-  function loopElementChildren(scope, children){
-    if(children.length == 0){
-      return false;
-    }
-    Array.prototype.forEach.call(children,function(child){
-      child.hasAttributes() && Array.prototype.forEach.call(child.attributes,function(attr){
-        bindAttrToScope(scope, child, attr);
-      });
-      bindTextNodesToScope(scope, child);
-      loopElementChildren(scope, child.children);
+  function addWatchersToElement(scope, element){
+    element.hasAttributes() && Array.prototype.forEach.call(element.attributes,function(attr){
+      watchElementAttribute(scope, element, attr);
     });
-    return true;
-  }
-
-  function bindTextNodesToScope(scope,element){
-    Array.prototype.forEach.call(element.childNodes, function(childNode, index){
-      var results = childNode.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
-      if(results != null){
-        scope.$watch(results, (function(element){
-          var oldVals, originalTextContent = element.textContent;
-          return function(newVals){
-            var newTextContent = originalTextContent;
-            if(newVals != oldVals){
-              newVals.forEach(function(newVal){
-                newTextContent = newTextContent.replace(/({{\s*?.+?\s*?}})/i, newVal != undefined? newVal : '');
-              });
-              element.textContent = newTextContent;
-              oldVals = newVals;
-            }
-          };
-        })(childNode));
+    element.childNodes && Array.prototype.forEach.call(element.childNodes, function(node){
+      //only care about text node
+      if(node.nodeType == 3){
+        //it is text node, need to wrap with span
+        watchChildNode(scope,element,node);
       }
     });
   }
 
-  function bindAttrToScope(scope, element, attr){
+  function watchChildNode(scope, element, node){
+    var results = node.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
+    if(results != null){
+      scope.$watch(results, (function(element, node){
+        var oldVals, originalTextContent = node.textContent, element = element;
+        return function(newVals){
+          var newTextContent = originalTextContent;
+          if(newVals != oldVals){
+            newVals.forEach(function(newVal){
+              newTextContent = newTextContent.replace(/({{\s*?.+?\s*?}})/i, newVal != undefined? newVal : '');
+            });
+            node.textContent = newTextContent;
+            oldVals = newVals;
+          }
+        };
+      })(element,node));
+    }
+  }
+
+  function watchElementAttribute(scope, element, attr){
     var results = attr.value.match(/{{\s*?(.+?)\s*?}}/ig), oldVal;
     if(results != null){
       scope.$watch(results, (function(attr){
