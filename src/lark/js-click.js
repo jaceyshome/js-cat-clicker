@@ -4,6 +4,12 @@ lark.addComponent('jsClick',[function(){
       link: (function($scope,$element,$attr){
         var fnStr = $element.getAttribute('js-click') || $element.getAttribute('data-js-click'),
           fnName = fnStr.replace(/\(.*?\)/g, '');
+        //TODO handle expression
+        //conditions:
+        //{{currentCat.name}}
+        //{{1+2}}
+        //{{firstName + lastName}}
+        //addChild(child)
         $element.addEventListener("click", function(){
           ($scope[fnName] != undefined) && $scope[fnName]();
           $scope.$apply();

@@ -56,6 +56,10 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
 }]));
 
 Scope.prototype.$getExpressionValue = function(expression){
+  //TODO handle expression
+  //conditions:
+  //{{currentCat.name}}
+  //{{1+2}}
   expression = expression.replace("{{",'').replace("}}",'');
   var keys = expression.split('.'), obj = this[keys[0]];
   for(var i= 1, len=keys.length; i<len; i++){
@@ -69,6 +73,10 @@ Scope.prototype.$getExpressionValue = function(expression){
 };
 
 Scope.prototype.$applyExpressionValue = function(expression,val){
+  //TODO handle expression
+  //conditions:
+  //{{currentCat.name}}
+  //{{1+2}}
   expression = expression.replace("{{",'').replace("}}",'');
   var keys = expression.split('.'), lastKey = keys.pop(), obj = this[keys[0]];
   for(var i= 1, len=keys.length; i<len; i++){
