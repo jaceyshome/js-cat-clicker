@@ -7,6 +7,10 @@ lark.addComponent('jsModel',[function(){
           $element.value = $scope.$getExpressionValue(expression);
         }
 
+        $scope.$watch(expression,function(val){
+          $element.value = val;
+        });
+
         $element.addEventListener("keyup",function(e){
           $scope.$applyExpressionValue(expression, e.target.value);
           $scope.$apply();
