@@ -5,7 +5,7 @@ lark.addService('catService',[function(){
     {
       name: "lonely cat",
       src: "assets/images/cat.jpg",
-      counter: 0
+      counter: 2
     },
     {
       name: 'cute cat',

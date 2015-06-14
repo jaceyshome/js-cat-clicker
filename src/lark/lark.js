@@ -16,13 +16,17 @@ var lark = (function(){
       attr: name.replace(/([A-Z])/g, "-$1").toLowerCase(),
       fn: _fn.apply(this, _argServices)
     });
+//    TODO sort components
 //    components.sort(function(a,b){
-//      if(a.priority && a.priority > b.priority){
-//        return a;
-//      }else{
-//        return b;
+//      if(a.fn().priority > b.fn().priority){
+//        return 1;
 //      }
-//    })
+//      if(a.fn().priority < b.fn().priority){
+//        return -1;
+//      }
+//      return 0;
+//    });
+//    console.log(components);
   };
 
   lark.addService = function(name, args){
@@ -82,14 +86,15 @@ var lark = (function(){
   }
 
   function bindComponent(scope, element, component){
-    var _component = component.fn(), _scope = {}, attr=null;
-    //Create a new scope if the scope is isolated, otherwise element share the same scope
+    var _component = component.fn(), _scope = {}, attr=null, parentScope = scope;
+    //Create a new scope if the scope is isolated, otherwise different elements share the same scope
     if(_component.scope){
       scope = createScope(scope);
       for(var key in _component.scope){
         if(_component.scope.hasOwnProperty(key)){
           attr = key.replace(/([A-Z])/g, "-$1");
-          _scope[key] = element.getAttribute(attr) || element.getAttribute("data-"+attr);
+          //get object from parent scope
+          _scope[key] = parentScope.$getExpressionValue(element.getAttribute(attr) || element.getAttribute("data-"+attr));
         }
       }
       scope.extend(_scope);
