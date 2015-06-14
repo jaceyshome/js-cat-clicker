@@ -19,7 +19,7 @@ lark.addComponent('jsRepeat',[function(){
               scope = lark.createScope($scope.$$parent);
               scope.extend($scope);
               scope[targetKey] = obj;
-              element = jQuery.clone($element);
+              element = $element.cloneNode(true);
               $element.parentElement.appendChild(element);
               lark.bindMatchedComponents(scope,element);
             }
