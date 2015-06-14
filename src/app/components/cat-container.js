@@ -7,15 +7,20 @@ lark.addComponent('catContainer',['catService',function(catService){
           '<img data-js-src="{{catService.currentCat.src}}" alt="cat image for {{catService.currentCant.name}}"/>' +
           '<span>{{catService.currentCat.name}} has been clicked by {{catService.currentCat.counter}} times</span>' +
         '</a>' +
-          '<div class="admin">' +
-          '<input data-js-model="catService.currentCat.name" />' +
+          '<a data-js-click="toggle()" class="adminButton">admin</a>' +
+          '<div class="admin-container" data-js-show="showAdmin">' +
+            '<input data-js-model="catService.currentCat.name" />' +
           '</div>',
 //        '<div class="messageContainer">counter: {{catService.currentCat.counter}}</div>',
       link: (function($scope,$element,$attr){
         $scope.catService = catService;
+        $scope.showAdmin = false;
         $scope.clickImage = function(e){
           catService.currentCat && (catService.currentCat.counter += 1);
         };
+        $scope.toggle = function(){
+          $scope.showAdmin = !$scope.showAdmin;
+        }
       })
     }
   }

@@ -15,6 +15,23 @@ img{
   width: 50%;
 }
 
+.catCurrentContainer .adminButton{
+  display: block;
+  background-color: cornflowerblue;
+  margin-top: 20px;
+  border-radius: 5px;
+  width: 100px;
+  height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.catCurrentContainer .admin-container{
+  margin-top: 20px;
+}
+
+
+
 .catAvatar img{
   width: 15%;
 }
