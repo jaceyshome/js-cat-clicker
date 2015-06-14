@@ -3,10 +3,13 @@ lark.addComponent('catContainer',['catService',function(catService){
     return {
       scope: {},
       template:
-        'click {{catService.currentCat.name}} <a href="javascript:void(0);" data-js-click="clickImage()">' +
+        '{{catService.currentCat.name}} <a href="javascript:void(0);" data-js-click="clickImage()">' +
           '<img data-js-src="{{catService.currentCat.src}}" alt="cat image for {{catService.currentCant.name}}"/>' +
           '<span>{{catService.currentCat.name}} has been clicked by {{catService.currentCat.counter}} times</span>' +
-        '</a>',
+        '</a>' +
+          '<div class="admin">' +
+          '<input data-js-model="catService.currentCat.name" />' +
+          '</div>',
 //        '<div class="messageContainer">counter: {{catService.currentCat.counter}}</div>',
       link: (function($scope,$element,$attr){
         $scope.catService = catService;
