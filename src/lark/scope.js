@@ -14,18 +14,16 @@ Scope.prototype.extend = function(obj){
   }
 };
 
-Scope.prototype.$apply = (lark.addService('$apply',['$digest',function($digest){
-  return function(){
-    $digest.loop();
-  }
+Scope.prototype.$apply = (lark.addService('$apply',['$refresh',function($refresh){
+  return $refresh.loop;
 }]));
 
-Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
+Scope.prototype.$watch = (lark.addService('$watch',['$refresh',function($refresh){
   return function(expression, fn){
     var scope = this;
     switch (typeof expression){
       case 'string':
-        $digest.watch(
+        $refresh.watch(
           function(){
             return scope.$getExpressionValue(expression);
           },
@@ -33,7 +31,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
         );
         break;
       case 'object':
-        $digest.watch(
+        $refresh.watch(
           function(){
             return Array.prototype.map.call(expression, function(val){
               return scope.$getExpressionValue(val);
@@ -43,7 +41,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
         );
         break;
       case 'function':
-        $digest.watch(
+        $refresh.watch(
           expression.bind(scope),
           fn
         );
@@ -51,7 +49,7 @@ Scope.prototype.$watch = (lark.addService('$watch',['$digest',function($digest){
       default :
         return;
     }
-    $digest.loop();
+    $refresh.loop();
   }
 }]));
 

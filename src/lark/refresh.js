@@ -1,14 +1,14 @@
-lark.addService('$digest',[function(){
-  var $digest= {}, watchers = [];
+lark.addService('$refresh',[function(){
+  var $refresh= {}, watchers = [];
 
-  $digest.watch = function(expression, fn){
+  $refresh.watch = function(expression, fn){
     watchers.push({
       expression: expression,
       fn: fn
     })
   };
 
-  $digest.loop = function(){
+  $refresh.loop = function(){
     var watcher;
     for(var i= 0, length = watchers.length; i<length; i++){
       watcher = watchers[i];
@@ -26,5 +26,5 @@ lark.addService('$digest',[function(){
     }
   };
 
-  return $digest;
+  return $refresh;
 }]);
