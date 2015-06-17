@@ -1,4 +1,9 @@
 lark.addService('$expression',["$cache",function($cache){
+  /*
+   * Thanks for lodash: https://lodash.com/
+   * cache is to save return path array from calling toPath function
+   *
+   */
   var MAX_SAFE_INTEGER = 9007199254740991;
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
     reIsPlainProp = /^\w*$/,
@@ -6,13 +11,13 @@ lark.addService('$expression',["$cache",function($cache){
   var reEscapeChar = /\\(\\)?/g;
   var service = {}, cache = {};
 
-
   /*
-  * Get the value from object property paths
-  * Support:
-  * {{cats[0].fn('name',obj.key)}}
-  * {{cat.key.name}}
-  */
+   * Get the value from object property paths
+   * Support:
+   * {{cats[0].fn('name',obj.key)}}
+   * {{cat.key.name}}
+   * Doesn't support {{2+2=4}}
+   */
   service.$get = function(obj, exp){
     var defaultValue = '';
     exp = exp.replace(/{{|}}/g,'');
@@ -27,22 +32,23 @@ lark.addService('$expression',["$cache",function($cache){
       return defaultValue;
     }
     cache[exp] = result;
-    return getValue(obj,result);
+    return getValue(obj,toPath(exp));
   };
 
 
-  function get(object, path) {
-    var defaultValue = '';
-    var result = object == null ? undefined : baseGet(object, toPath(path));
-    return result === undefined ? defaultValue : result;
-  }
-
-  function set(object, path, value) {
+  service.$set = function(object, exp, value) {
     if (object == null) {
       return object;
     }
-    var pathKey = (path + '');
-    path = (object[pathKey] != null || isKey(path, object)) ? [pathKey] : toPath(path);
+    var path = cache[exp], pathKey = (path + '');
+    if(path == undefined){
+      path = toPath(exp);
+    }
+    if(path == undefined){
+      return '';
+    }
+    cache[exp] = path;
+    path = (object[pathKey] != null || isKey(path, object)) ? [pathKey] : path;
 
     var index = -1,
       length = path.length,
@@ -61,7 +67,7 @@ lark.addService('$expression',["$cache",function($cache){
       nested = nested[key];
     }
     return object;
-  }
+  };
 
   function isIndex(value, length) {
     value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
@@ -85,12 +91,6 @@ lark.addService('$expression',["$cache",function($cache){
     var result = [];
     //TODO: need to add extra code if the value can be an array.
     value.replace(rePropName, function(match, fn, number, quote, string) {
-
-      console.log("match: ", match);
-      console.log("fn: ", fn);
-      console.log("path: ", quote);
-      console.log("number: ", number);
-      console.log("string: ", string);
       result.push(quote ? string.replace(reEscapeChar, '$1') : (handleFnPath(fn) || number || match));
     });
     return result;
@@ -100,8 +100,6 @@ lark.addService('$expression',["$cache",function($cache){
     var result = match;
     if(match){
       match.replace(/(.*)\((.*?)\)/ig, function(match, fnName, fnArguments){
-        console.log(fnName);
-        console.log(fnArguments);
         if(fnName){
           result = (function(){
             return function(master, self){
@@ -127,10 +125,8 @@ lark.addService('$expression',["$cache",function($cache){
       path = [pathKey];
     }
     while (object != null && index < length) {
-      console.log(path[index]);
       if(typeof path[index] == "function"){
         object = path[index](master, object);
-        console.log("function call result", object);
       }else{
         if(object.hasOwnProperty(path[index])){
           object = object[path[index]];

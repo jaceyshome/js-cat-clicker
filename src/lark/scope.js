@@ -55,7 +55,7 @@ Scope.prototype.$getExpValue = function(exp){
   return lark.$expression.$get(this,exp);
 };
 
-Scope.prototype.$expSet = function(exp,value){
-  var scope= this;
+Scope.prototype.$setExpValue = function(exp,value){
+  lark.$expression.$set(this,exp,value);
 };
 

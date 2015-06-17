@@ -12,7 +12,7 @@ lark.addComponent('jsModel',[function(){
         });
 
         $element.addEventListener("keyup",function(e){
-          $scope.$applyExpressionValue(expression, e.target.value);
+          $scope.$setExpValue(expression, e.target.value);
           $scope.$apply();
         });
 
