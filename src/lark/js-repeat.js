@@ -10,7 +10,7 @@ lark.addComponent('jsRepeat',[function(){
           scopeObjKey = results[2];
 
         if(expression && $scope[targetKey] == undefined){
-          scopeObj = $scope.$getExpressionValue(scopeObjKey);
+          scopeObj = $scope.$getExpValue(scopeObjKey);
           (typeof scopeObj != undefined) && Array.prototype.forEach.call(scopeObj, function(obj, index, array){
             if(index == 0){
               $scope[targetKey] = obj;

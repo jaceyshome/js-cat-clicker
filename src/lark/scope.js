@@ -14,75 +14,48 @@ Scope.prototype.extend = function(obj){
   }
 };
 
-Scope.prototype.$apply = (lark.addService('$apply',['$refresh',function($refresh){
-  return $refresh.loop;
-}]));
-
-Scope.prototype.$watch = (lark.addService('$watch',['$refresh',function($refresh){
-  return function(expression, fn){
-    var scope = this;
-    switch (typeof expression){
-      case 'string':
-        $refresh.watch(
-          function(){
-            return scope.$getExpressionValue(expression);
-          },
-          fn
-        );
-        break;
-      case 'object':
-        $refresh.watch(
-          function(){
-            return Array.prototype.map.call(expression, function(val){
-              return scope.$getExpressionValue(val);
-            });
-          },
-          fn
-        );
-        break;
-      case 'function':
-        $refresh.watch(
-          expression.bind(scope),
-          fn
-        );
-        break;
-      default :
-        return;
-    }
-    $refresh.loop();
-  }
-}]));
-
-Scope.prototype.$getExpressionValue = function(expression){
-  //TODO handle expression
-  //conditions:
-  //{{currentCat.name}}
-  //{{1+2}}
-  expression = expression.replace("{{",'').replace("}}",'');
-  var keys = expression.split('.'), obj = this[keys[0]];
-  for(var i= 1, len=keys.length; i<len; i++){
-    if(obj != undefined){
-      obj = obj[keys[i]]
-    }else{
-      return undefined;
-    }
-  }
-  return obj;
+Scope.prototype.$apply = function(){
+  lark.$refresh.loop();
 };
 
-Scope.prototype.$applyExpressionValue = function(expression,val){
-  //TODO handle expression
-  //conditions:
-  //{{currentCat.name}}
-  //{{1+2}}
-  expression = expression.replace("{{",'').replace("}}",'');
-  var keys = expression.split('.'), lastKey = keys.pop(), obj = this[keys[0]];
-  for(var i= 1, len=keys.length; i<len; i++){
-    if(obj != undefined){
-      obj = obj[keys[i]]
-    }else{
-      return undefined;
-    }
+Scope.prototype.$watch = function(expression, fn){
+  var scope = this;
+  switch (typeof expression){
+    case 'string':
+      lark.$refresh.watch(
+        function(){
+          return scope.$getExpValue(expression);
+        },
+        fn
+      );
+      break;
+    case 'object':
+      lark.$refresh.watch(
+        function(){
+          return Array.prototype.map.call(expression, function(val){
+            return scope.$getExpValue(val);
+          });
+        },
+        fn
+      );
+      break;
+    case 'function':
+      lark.$refresh.watch(
+        expression.bind(scope),
+        fn
+      );
+      break;
+    default :
+      return;
   }
-  obj[lastKey] = val;
+  this.$apply();
 };
+
+Scope.prototype.$getExpValue = function(exp){
+  return lark.$expression.$get(this,exp);
+};
+
+Scope.prototype.$expSet = function(exp,value){
+  var scope= this;
+};
+

@@ -37,11 +37,18 @@ var lark = (function(){
   };
 
   lark.run = function(){
+    setPublicServers();
     loopElements(createScope(rootScope,$mainContainer), $mainContainer.children);
   };
 
   lark.bindMatchedComponents = bindMatchedComponents;
   lark.createScope = createScope;
+
+  function setPublicServers(){
+    lark.$refresh = services["$refresh"];
+    lark.$cache = services["$cache"];
+    lark.$expression = services["$expression"];
+  }
 
   function generateUID(){
     var id = "_" + entityTotal;
@@ -94,7 +101,7 @@ var lark = (function(){
         if(_component.scope.hasOwnProperty(key)){
           attr = key.replace(/([A-Z])/g, "-$1");
           //get object from parent scope
-          _scope[key] = parentScope.$getExpressionValue(element.getAttribute(attr) || element.getAttribute("data-"+attr));
+          _scope[key] = parentScope.$getExpValue(element.getAttribute(attr) || element.getAttribute("data-"+attr));
         }
       }
       scope.extend(_scope);
