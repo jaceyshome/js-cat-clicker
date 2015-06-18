@@ -9,7 +9,7 @@ lark.addComponent('jsModel',[function(){
 
         $scope.$watch(expression,function(val){
           if($element.value != val){
-            $element.value = val;
+            $element.value = val || '';
           }
         });
 
