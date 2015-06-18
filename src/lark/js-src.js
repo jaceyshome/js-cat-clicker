@@ -7,11 +7,8 @@ lark.addComponent('jsSrc',[function(){
           function(){
             return $element.getAttribute('js-src') || $element.getAttribute('data-js-src');
           },
-          function(newValue){
-            if(oldValue != newValue){
-              $element.setAttribute('src',newValue);
-              oldValue = newValue;
-            }
+          function(val){
+            $element.setAttribute('src',val);
           }
         );
       })

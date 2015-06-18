@@ -23,7 +23,6 @@ lark.addComponent('jsModel',[function(){
             oldValue = e.target.value;
           };
         })());
-
       })
     }
   }

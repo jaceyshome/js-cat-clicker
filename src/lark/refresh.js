@@ -9,9 +9,10 @@ lark.addService('$refresh',[function(){
     if(scope == null){
       return;
     }
+    scope.$execWatchers();
     if(scope.$$children && scope.$$children.length > 0){
       scope.$$children.forEach(function(childScope){
-        childScope.$$execWatchers();
+        childScope.$execWatchers();
         execScopeWatchers(childScope);
       })
     }

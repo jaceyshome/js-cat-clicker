@@ -32,26 +32,42 @@ Scope.prototype.$watch = function(expression, fn){
   var scope = this;
   switch (typeof expression){
     case 'string':
-      scope.watchers = {
-        expression: function(){return scope.$getExpValue(expression);},
-        fn: fn
-      };
+      scope.watchers = (function(scope){
+        var oldValue = null, newValue;
+        return function(){
+          newValue = scope.$getExpValue(expression);
+          if(oldValue != newValue && typeof fn == "function"){
+            fn(newValue);
+            oldValue = newValue;
+          }
+        };
+      })(scope);
       break;
     case 'object':
-      scope.watchers = {
-        expression: function(){
-            return Array.prototype.map.call(expression, function(val){
-              return scope.$getExpValue(val);
-            });
-          },
-        fn: fn
-      };
+      scope.watchers = (function(scope){
+        var oldValues = null, newValues;
+        return function(){
+          newValues = Array.prototype.map.call(expression, function(val){
+            return scope.$getExpValue(val);
+          });
+          if(oldValues != newValues && typeof fn == "function"){
+            fn(newValues);
+            oldValues = newValues;
+          }
+        };
+      })(scope);
       break;
     case 'function':
-      scope.watchers = {
-        expression: expression,
-        fn: fn
-      };
+      scope.watchers = (function(scope){
+        var oldValue = null, newValue;
+        return function(){
+          newValue = expression.call(scope);
+          if(oldValue != newValue && typeof fn == "function"){
+            fn(newValue);
+            oldValue = newValue;
+          }
+        };
+      })(scope);
       break;
     default :
       return;
@@ -59,20 +75,12 @@ Scope.prototype.$watch = function(expression, fn){
   this.$apply();
 };
 
-Scope.prototype.$$execWatchers = function(){
+Scope.prototype.$execWatchers = function(){
   var watchers = this.watchers, watcher;
   if(watchers && watchers.length > 0){
     for(var i= 0, length = watchers.length; i<length; i++){
       watcher = watchers[i];
-      switch (typeof(watcher.expression)){
-        case 'function':
-          var result = watcher.expression();
-          watcher.fn(result);
-          break;
-        default:
-          watcher.fn(watcher.expression);
-          break;
-      }
+      watcher();
     }
   }
 };
