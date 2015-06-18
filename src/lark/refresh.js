@@ -1,30 +1,21 @@
 lark.addService('$refresh',[function(){
   var $refresh= {}, watchers = [];
 
-  $refresh.watch = function(expression, fn){
-    watchers.push({
-      expression: expression,
-      fn: fn
-    })
+  $refresh.loop = function(){
+    execScopeWatchers(lark.$rootScope);
   };
 
-  $refresh.loop = function(){
-    var watcher;
-    for(var i= 0, length = watchers.length; i<length; i++){
-      watcher = watchers[i];
-      switch (typeof(watcher.expression)){
-        case 'function':
-          watcher.fn(watcher.expression());
-          break;
-        case 'string':
-          watcher.fn(watcher.expression);
-          break;
-        default:
-          watcher.fn(watcher.expression);
-          break;
-      }
+  function execScopeWatchers(scope){
+    if(scope == null){
+      return;
     }
-  };
+    if(scope.$$children && scope.$$children.length > 0){
+      scope.$$children.forEach(function(childScope){
+        childScope.$$execWatchers();
+        execScopeWatchers(childScope);
+      })
+    }
+  }
 
   return $refresh;
 }]);

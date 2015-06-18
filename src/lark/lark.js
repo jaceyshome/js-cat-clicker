@@ -1,11 +1,17 @@
 var lark = (function(){
   var lark = {}, entityTotal = 0,
-    $mainContainer = null, rootScope = null,
+    $mainContainer = null, _rootScope = null,
     components = [], services = {};
+
+  Object.defineProperty(lark,"$rootScope", {
+    get:function(){
+      return _rootScope;
+    }
+  });
 
   lark.addApp = function(elementId){
     $mainContainer = document.getElementById(elementId);
-    rootScope = new Scope(generateUID());
+    _rootScope = new Scope(generateUID());
   };
 
   lark.addComponent = function(name,args){
@@ -38,7 +44,7 @@ var lark = (function(){
 
   lark.run = function(){
     setPublicServers();
-    loopElements(createScope(rootScope,$mainContainer), $mainContainer.children);
+    loopElements(createScope(_rootScope,$mainContainer), $mainContainer.children);
   };
 
   lark.bindMatchedComponents = bindMatchedComponents;
