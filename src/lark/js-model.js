@@ -8,13 +8,21 @@ lark.addComponent('jsModel',[function(){
         }
 
         $scope.$watch(expression,function(val){
-          $element.value = val;
+          if($element.value != val){
+            $element.value = val;
+          }
         });
 
-        $element.addEventListener("keyup",function(e){
-          $scope.$setExpValue(expression, e.target.value);
-          $scope.$apply();
-        });
+        $element.addEventListener("keyup",(function(){
+          var oldValue = null;
+          return function(e){
+            if(oldValue != e.target.value){
+              $scope.$setExpValue(expression, e.target.value);
+              $scope.$apply();
+            }
+            oldValue = e.target.value;
+          };
+        })());
 
       })
     }
