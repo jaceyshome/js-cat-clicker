@@ -29,7 +29,7 @@ lark.addService('catService',[function(){
     }
   ];
 
-  service.currentCat = service.cats[0];
+  service.currentCat = null;
 
   return service;
 }]);

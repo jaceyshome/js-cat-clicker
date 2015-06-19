@@ -33,10 +33,11 @@ Scope.prototype.$watch = function(expression, fn){
   switch (typeof expression){
     case 'string':
       scope.watchers = (function(scope){
-        var oldValue = null, newValue;
+        var oldValue = null, newValue, firstRun = true;
         return function(){
           newValue = scope.$getExpValue(expression);
-          if(oldValue != newValue && typeof fn == "function"){
+          if((oldValue !== newValue || firstRun == true) && typeof fn == "function"){
+            firstRun = false;
             fn(newValue);
             oldValue = newValue;
           }
@@ -45,12 +46,13 @@ Scope.prototype.$watch = function(expression, fn){
       break;
     case 'object':
       scope.watchers = (function(scope){
-        var oldValues = null, newValues;
+        var oldValues = null, newValues, firstRun = true;
         return function(){
           newValues = Array.prototype.map.call(expression, function(val){
             return scope.$getExpValue(val);
           });
-          if(oldValues != newValues && typeof fn == "function"){
+          if((oldValues !== newValues || firstRun == true) && typeof fn == "function"){
+            firstRun = false;
             fn(newValues);
             oldValues = newValues;
           }
@@ -59,10 +61,11 @@ Scope.prototype.$watch = function(expression, fn){
       break;
     case 'function':
       scope.watchers = (function(scope){
-        var oldValue = null, newValue;
+        var oldValue = null, newValue, firstRun = true;
         return function(){
           newValue = expression.call(scope);
-          if(oldValue != newValue && typeof fn == "function"){
+          if((oldValue !== newValue || firstRun == true) && typeof fn == "function"){
+            firstRun = false;
             fn(newValue);
             oldValue = newValue;
           }
