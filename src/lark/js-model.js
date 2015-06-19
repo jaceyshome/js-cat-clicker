@@ -1,7 +1,7 @@
 lark.addComponent('jsModel',[function(){
   return function(){
     return {
-      link: (function($scope,$element,$attr){
+      link: (function($scope,$element){
         var expression = $element.getAttribute('js-model') || $element.getAttribute('data-js-model');
         if(expression){
           $element.value = $scope.$getExpValue(expression);

@@ -2,7 +2,7 @@ lark.addComponent('jsRepeat',[function(){
   return function(){
     return {
       priority: 1000,
-      link: (function($scope,$element,$attr){
+      link: (function($scope,$element){
         var expression = $element.getAttribute('js-repeat') || $element.getAttribute('data-js-repeat'), element, scope, scopeObj ,
           results = expression.match(/(\w+)\s+?[Ii][Nn]\s+?(\w+)/),
           match = results[0],

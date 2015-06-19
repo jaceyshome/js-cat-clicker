@@ -1,7 +1,7 @@
 lark.addComponent('jsClick',[function(){
   return function(){
     return {
-      link: (function($scope,$element,$attr){
+      link: (function($scope,$element){
         var fnStr = $element.getAttribute('js-click') || $element.getAttribute('data-js-click'),
           fnName = fnStr.replace(/\(.*?\)/g, '');
         //TODO handle expression

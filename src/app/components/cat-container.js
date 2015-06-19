@@ -14,7 +14,7 @@ lark.addComponent('catContainer',['catService',function(catService){
             '<input data-js-model="catService.currentCat.counter" />' +
           '</div>',
 //        '<div class="messageContainer">counter: {{catService.currentCat.counter}}</div>',
-      link: (function($scope,$element,$attr){
+      link: (function($scope,$element){
         $scope.catService = catService;
         $scope.showAdmin = false;
         $scope.clickImage = function(e){

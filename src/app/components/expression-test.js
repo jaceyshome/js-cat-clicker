@@ -3,7 +3,7 @@ lark.addComponent('expressionTest',['catService',function(catService){
     return {
       scope: {},
       template:"<div>{{cats[0].fn('name',clickTimes)}}</div>",
-      link: (function($scope,$element,$attr){
+      link: (function($scope,$element){
         $scope.cats = [
           {
             name: "lonely cat",
