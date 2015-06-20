@@ -87,7 +87,7 @@ Scope.prototype.$execWatchers = function(){
 };
 
 Scope.prototype.$destroy = function(){
- //TODO deregister listeners
+ //TODO unregister listeners
  delete this.watchers;
  this.$$children.forEach(function(child){
    child.$destroy();
@@ -103,7 +103,9 @@ Scope.prototype.$addChild = function(childScope){
   if(typeof this.$$children == undefined){
     this.$$children = [];
   }
-  this.$$children.push(childScope);
+  if(this.$$children.indexOf(childScope)<0){
+    this.$$children.push(childScope);
+  }
 };
 
 Scope.prototype.$getExpValue = function(exp){
