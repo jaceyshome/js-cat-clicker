@@ -1,7 +1,6 @@
 lark.addComponent('jsRepeat',[function(){
   return function(){
     return {
-      priority: 1000,
       link: (function($scope,$element){
         var expression = $element.getAttribute('js-repeat') || $element.getAttribute('data-js-repeat');
         var results = expression.match(/(\w+)\s+?[Ii][Nn]\s+?(\w+)/);
@@ -16,8 +15,7 @@ lark.addComponent('jsRepeat',[function(){
             //TODO child todo
           }else{
             addWatcherOnParent();
-            $scope.$$parent.$apply();
-            removeThisChild();
+            $element.parentNode.removeChild($element);
           }
         }
 
@@ -27,6 +25,7 @@ lark.addComponent('jsRepeat',[function(){
           cachedScope.extend($scope);
           delete cachedScope.$index;
           cachedScope.watchers = [];
+          $scope.$$parent.$removeChild(cachedScope);
           return cachedScope;
         }
 
@@ -78,7 +77,7 @@ lark.addComponent('jsRepeat',[function(){
 
             function handleRemovedItems(items){
               var child, hasChanged=false;
-              if(!children || children.length === 0){
+              if(!children || children.length === 0 || items == null){
                 return;
               }
               for(var i= 0,len=children.length;i<len;i++){
@@ -98,6 +97,9 @@ lark.addComponent('jsRepeat',[function(){
             function handleNewItems(scope,items,cachedChildElement){
               //first find all children with items attribute
               var newChildScope, childElement, newElementFns = [];
+              if(items == null){
+                return;
+              }
               if(children == null){
                 children = [];
               }
@@ -110,7 +112,6 @@ lark.addComponent('jsRepeat',[function(){
                 newChildScope[itemKey] = items[i];
                 newChildScope.$element = childElement;
                 newChildScope.$$parent = scope;
-                scope.$addChild(newChildScope);
                 children.push(newChildScope);
                 newElementFns.push((function(childScope,childElement){
                   return function(){lark.bindMatchedComponents(childScope,childElement)};
@@ -129,11 +130,6 @@ lark.addComponent('jsRepeat',[function(){
               createCachedScope(), $element.cloneNode(true)
             )
           );
-        }
-
-        function removeThisChild(){
-          $scope.$destroy();
-          $element.parentNode.removeChild($element);
         }
 
         init();
