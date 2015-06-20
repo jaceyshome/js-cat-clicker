@@ -49,6 +49,7 @@ var lark = (function(){
 
   lark.bindMatchedComponents = bindMatchedComponents;
   lark.createScope = createScope;
+  lark.generateUID = generateUID;
 
   function setPublicServers(){
     lark.$refresh = services["$refresh"];
@@ -94,7 +95,7 @@ var lark = (function(){
   function createScope(parentScope){
     var _scope =  new Scope(generateUID());
     _scope.$$parent = parentScope;
-    parentScope.$$children.push(_scope);
+    parentScope.$addChild(_scope);
     return _scope;
   }
 

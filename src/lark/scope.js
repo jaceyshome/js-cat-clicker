@@ -33,41 +33,39 @@ Scope.prototype.$watch = function(expression, fn){
   switch (typeof expression){
     case 'string':
       scope.watchers = (function(scope){
-        var oldValue = null, newValue, firstRun = true;
+        var cachedValue = null, newValue, firstRun = true;
         return function(){
           newValue = scope.$getExpValue(expression);
-          if((oldValue !== newValue || firstRun == true) && typeof fn == "function"){
+          if((cachedValue != JSON.stringify(newValue) || firstRun == true) && typeof fn == "function"){
             firstRun = false;
+            console.log();
             fn(newValue);
-            oldValue = newValue;
+            cachedValue = JSON.stringify(newValue);
           }
         };
       })(scope);
       break;
     case 'object':
       scope.watchers = (function(scope){
-        var oldValues = null, newValues, firstRun = true;
+        var cachedValue = null, newValue, firstRun = true;
         return function(){
-          newValues = Array.prototype.map.call(expression, function(val){
+          newValue = Array.prototype.map.call(expression, function(val){
             return scope.$getExpValue(val);
           });
-          if((oldValues !== newValues || firstRun == true) && typeof fn == "function"){
+          if((cachedValue != JSON.stringify(newValue)|| firstRun == true) && typeof fn == "function"){
             firstRun = false;
-            fn(newValues);
-            oldValues = newValues;
+            fn(newValue);
+            cachedValue = JSON.stringify(newValue);
           }
         };
       })(scope);
       break;
     case 'function':
+      //Watcher function won't cache value, as it will give more controls to $scope itself
       scope.watchers = (function(scope){
-        var oldValue = null, newValue, firstRun = true;
         return function(){
-          newValue = expression.call(scope);
-          if((oldValue !== newValue || firstRun == true) && typeof fn == "function"){
-            firstRun = false;
-            fn(newValue);
-            oldValue = newValue;
+          if(typeof fn == "function"){
+            fn(expression.call(scope));
           }
         };
       })(scope);
@@ -83,9 +81,29 @@ Scope.prototype.$execWatchers = function(){
   if(watchers && watchers.length > 0){
     for(var i= 0, length = watchers.length; i<length; i++){
       watcher = watchers[i];
-      watcher();
+      (typeof watcher == 'function') && watcher();
     }
   }
+};
+
+Scope.prototype.$destroy = function(){
+ //TODO deregister listeners
+ delete this.watchers;
+ this.$$children.forEach(function(child){
+   child.$destroy();
+ });
+ this.$$parent.$removeChild(this);
+};
+
+Scope.prototype.$removeChild = function(childScope){
+  this.$$children.splice(this.$$children.indexOf(childScope),1);
+};
+
+Scope.prototype.$addChild = function(childScope){
+  if(typeof this.$$children == undefined){
+    this.$$children = [];
+  }
+  this.$$children.push(childScope);
 };
 
 Scope.prototype.$getExpValue = function(exp){
