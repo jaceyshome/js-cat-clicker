@@ -87,7 +87,6 @@ Scope.prototype.$execWatchers = function(){
 };
 
 Scope.prototype.$destroy = function(){
- //TODO unregister listeners
  delete this.watchers;
  this.$$children.forEach(function(child){
    child.$destroy();
