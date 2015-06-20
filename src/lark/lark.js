@@ -44,7 +44,7 @@ var lark = (function(){
 
   lark.run = function(){
     setPublicServers();
-    loopElements(createScope(_rootScope,$mainContainer), $mainContainer.children);
+    loopElements(createScope(_rootScope), $mainContainer.children);
   };
 
   lark.bindMatchedComponents = bindMatchedComponents;
@@ -137,7 +137,7 @@ var lark = (function(){
     var results = node.textContent.match(/{{\s*?(.+?)\s*?}}/ig);
     if(results != null){
       scope.$watch(results, (function(element, node){
-        var oldVals, originalTextContent = node.textContent, element = element;
+        var oldVals, originalTextContent = node.textContent;
         return function(newVals){
           var newTextContent = originalTextContent;
           if(newVals != oldVals){
