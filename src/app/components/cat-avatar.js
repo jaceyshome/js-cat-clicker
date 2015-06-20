@@ -8,7 +8,6 @@ lark.addComponent('catAvatar',['catService',function(catService){
       link: (function($scope,$element){
         $scope.clickImage = function(e){
           catService.currentCat = $scope.cat;
-          $scope.$apply();
         };
       })
     }
