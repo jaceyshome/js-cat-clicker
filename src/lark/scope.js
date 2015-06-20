@@ -38,7 +38,6 @@ Scope.prototype.$watch = function(expression, fn){
           newValue = scope.$getExpValue(expression);
           if((cachedValue != JSON.stringify(newValue) || firstRun == true) && typeof fn == "function"){
             firstRun = false;
-            console.log();
             fn(newValue);
             cachedValue = JSON.stringify(newValue);
           }
