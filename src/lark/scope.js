@@ -93,7 +93,7 @@ Scope.prototype.$destroy = function(){
       delete this[key];
     }
   }
-  this.$$parent.$removeChild(this);
+  (this.$$parent != null) && this.$$parent.$removeChild(this);
 };
 
 Scope.prototype.$removeChild = function(childScope){

@@ -3,35 +3,70 @@ img{
   height: auto;
 }
 
-.catListContainer{
+h1{
+  text-align: center;
+}
+
+.container{
+  max-width: 660px;
+  margin: auto;
+}
+
+.block-container{
   display: inline-block;
   vertical-align: top;
   width: 45%;
 }
 
-.catCurrentContainer{
-  display: inline-block;
-  vertical-align: top;
-  width: 50%;
+.block-container .left{
+  width: 38%;
+}
+
+.block-container .right{
+  width: 60%;
 }
 
 .catCurrentContainer .adminButton{
   display: block;
-  background-color: cornflowerblue;
   margin-top: 20px;
-  border-radius: 5px;
-  width: 100px;
-  height: 20px;
-  text-align: center;
-  cursor: pointer;
 }
 
 .catCurrentContainer .admin-container{
   margin-top: 20px;
 }
 
+.cat-avatar-container{
+  display: block;
+  width: 100%;
+}
 
+.cat-avatar-container .image-button{
+  display: inline-block;
+  vertical-align: top;
+  width: 60%;
+}
 
-.catAvatar img{
-  width: 15%;
+.cat-avatar-container .image-button img{
+  width: 28%;
+}
+
+.cat-avatar-container .image-button .text{
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 2%;
+  line-height: 2;
+}
+
+.cat-avatar-container .delete-button{
+  display: inline-block;
+  vertical-align: top;
+  text-align: right;
+}
+
+.adminButton{
+  display: block;
+}
+
+.newcat-container{
+  margin-top: 20px;
 }

@@ -9,7 +9,8 @@
           link: (function($scope,$element){
             var fnStr = $element.getAttribute(attrName) || $element.getAttribute('data-'+attrName),
               fnName = fnStr.replace(/\(.*?\)/g, '');
-            $element.addEventListener(eventName, function(){
+            //TODO past event to inner function
+            $element.addEventListener(eventName, function(event){
               ($scope[fnName] != undefined) && $scope[fnName]();
               $scope.$apply();
             }, false);
