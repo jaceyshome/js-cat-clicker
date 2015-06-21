@@ -88,12 +88,12 @@ Scope.prototype.$removeWatcher = function(){
 };
 
 Scope.prototype.$destroy = function(){
- delete this._$$events;
- delete this._$$watchers;
- this.$$children.forEach(function(child){
-   child.$destroy();
- });
- this.$$parent.$removeChild(this);
+  for(var key in this){
+    if(this.hasOwnProperty(key)){
+      delete this[key];
+    }
+  }
+  this.$$parent.$removeChild(this);
 };
 
 Scope.prototype.$removeChild = function(childScope){
