@@ -6,7 +6,9 @@ var lark = (function(){
   Object.defineProperty(lark,"$rootScope", {
     get:function(){
       return _rootScope;
-    }
+    },
+    enumerable: false,
+    configurable: false
   });
 
   lark.addApp = function(elementId){
