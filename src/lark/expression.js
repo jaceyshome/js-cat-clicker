@@ -19,6 +19,9 @@ lark.addService('$expression',["$cache",function($cache){
    * Doesn't support {{2+2=4}}
    */
   service.$get = function(obj, exp){
+    if(exp == null){
+      return;
+    }
     var defaultValue = '';
     exp = exp.replace(/{{|}}/g,'');
     if(obj == null){
