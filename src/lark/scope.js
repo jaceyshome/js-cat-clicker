@@ -1,16 +1,14 @@
 function Scope(id){
-  var scope = this, _watchers=[];
+  var scope = this;
   scope.__id = id;
   scope.$$parent = null;
   scope.$$children = [];
-  Object.defineProperty(scope,'watchers',{
-    get:function(){
-      return _watchers;
-    },
-    set:function(val){
-      _watchers.push(val);
-    },
-    configurable: false,
+  Object.defineProperty(scope,'_$$watchers',{
+    value: [],
+    enumerable: false
+  });
+  Object.defineProperty(scope, "_$$events", {
+    value: [],
     enumerable: false
   });
   return scope;
@@ -32,7 +30,7 @@ Scope.prototype.$watch = function(expression, fn){
   var scope = this;
   switch (typeof expression){
     case 'string':
-      scope.watchers = (function(scope){
+      scope._$$watchers.push((function(scope){
         var cachedValue = null, newValue, firstRun = true;
         return function(){
           newValue = scope.$getExpValue(expression);
@@ -42,10 +40,10 @@ Scope.prototype.$watch = function(expression, fn){
             cachedValue = JSON.stringify(newValue);
           }
         };
-      })(scope);
+      })(scope));
       break;
     case 'object':
-      scope.watchers = (function(scope){
+      scope._$$watchers.push((function(scope){
         var cachedValue = null, newValue, firstRun = true;
         return function(){
           newValue = Array.prototype.map.call(expression, function(val){
@@ -57,26 +55,26 @@ Scope.prototype.$watch = function(expression, fn){
             cachedValue = JSON.stringify(newValue);
           }
         };
-      })(scope);
+      })(scope));
       break;
     case 'function':
       //Watcher function won't cache value, as it will give more controls to $scope itself
-      scope.watchers = (function(scope){
+      scope._$$watchers.push((function(scope){
         return function(){
           if(typeof fn == "function"){
             fn(expression.call(scope));
           }
         };
-      })(scope);
+      })(scope));
       break;
     default :
-      return;
+      break;
   }
   this.$apply();
 };
 
 Scope.prototype.$execWatchers = function(){
-  var watchers = this.watchers, watcher;
+  var watchers = this._$$watchers, watcher;
   if(watchers && watchers.length > 0){
     for(var i= 0, length = watchers.length; i<length; i++){
       watcher = watchers[i];
@@ -85,8 +83,13 @@ Scope.prototype.$execWatchers = function(){
   }
 };
 
+Scope.prototype.$removeWatcher = function(){
+  //TODO remove watcher
+};
+
 Scope.prototype.$destroy = function(){
- delete this.watchers;
+ delete this._$$events;
+ delete this._$$watchers;
  this.$$children.forEach(function(child){
    child.$destroy();
  });
@@ -114,3 +117,40 @@ Scope.prototype.$setExpValue = function(exp,value){
   lark.$expression.$set(this,exp,value);
 };
 
+Scope.prototype.$on = function(eventName, fn){
+  this._$$events.push({
+    name:eventName,
+    fn: fn
+  });
+  return fn;
+};
+
+Scope.prototype.$emit = function(eventName, data){
+  this._$$events.forEach(function(event){
+    if(event.name == eventName && typeof event.fn == 'function'){
+      event.fn(data);
+    }
+  });
+  this.$$children.forEach(function(child){
+    child.$emit(eventName,data);
+  });
+};
+
+Scope.prototype.$broadcast = function(eventName, data){
+  lark.$rootScope.$emit(eventName,data);
+};
+
+Scope.prototype.$off = function(eventName, fn){
+  var index;
+  if(!!fn){
+    for(var i= 0,len=this._$$events.length;i<len;i++){
+      if(this._$$events[i].fn === fn){
+        index = i;
+        break;
+      }
+    }
+  }
+  if(index != null){
+    this._$$events.splice(index,1);
+  }
+};
