@@ -1,3 +1,3 @@
 # js-cat-clicker
 
-A website developed with entirely Javascript.
+A website developed entirely in Javascript.
